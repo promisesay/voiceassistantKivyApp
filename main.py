@@ -5,6 +5,7 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from threading import Thread
 import record_audio  # Import the module with PyAudio recording code
+import webbrowser
 
 
 class VoiceAssistantApp(App):
@@ -25,6 +26,8 @@ class VoiceAssistantApp(App):
         button_record = Button(text='Record Audio', on_press=self.record_audio)
         layout.add_widget(button_record)
 
+        button_search = Button(text='google', on_pres=self.websearch)
+        layout.add_widget(button_search)
         return layout
 
     def start_listening(self, instance):
@@ -61,6 +64,13 @@ class VoiceAssistantApp(App):
     def speak(self, text):
         self.engine.say(text)
         self.engine.runAndWait()
+
+    def websearch(self, instance):
+        with sr.Microphone() as source:
+            self.recognizer.adjust_for_ambient_noise(source)
+            print("listening...")
+            audio = self.recognizer.listen(source)
+        webbrowser.open(f'https://www.google.com/search?q={audio}')
 
     def record_audio(self, instance):
         # Run the record_and_save function in a separate thread to avoid freezing the GUI
